@@ -35,7 +35,7 @@ class NewCharacterActivity : AppCompatActivity() {
         val generateButton = findViewById<Button>(R.id.generateButton)
 
         generateButton.setOnClickListener {
-            characterData = CharacterGenerator.generate()
+            characterData = CharacterGenerator.fromApiData("halfling,Lars Kizzy,14,13,8")
 
             characterData.run {
                 nameTextView.text = name

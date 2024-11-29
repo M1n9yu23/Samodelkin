@@ -1,6 +1,12 @@
 package android.bignerdranch.com
 
 import java.io.Serializable
+import java.net.URL
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+
+private const val CHARACTER_DATA_API = "https://chargen-api.herokuapp.com/"
 
 private fun <T> List<T>.rand() = shuffled().first()
 
@@ -8,6 +14,7 @@ private fun Int.roll() = (0 until this).map { (1..6).toList().rand() }.sum().toS
 
 private val firstName = listOf("Eli", "Alex", "Sophie")
 private val lastName = listOf("Lightweaver", "Greatfoot", "Oakenfeld")
+
 
 object CharacterGenerator {
     data class CharacterData(val name: String, val race: String, val dex: String, val wis: String, val str: String) : Serializable
@@ -27,5 +34,12 @@ object CharacterGenerator {
     fun fromApiData(apiData: String) : CharacterData {
         val (race,name,dex,wis,str) = apiData.split(",")
         return CharacterData(name,race,dex,wis,str)
+    }
+
+    fun fetchCharacterData() : Deferred<CharacterGenerator.CharacterData> {
+        return GlobalScope.async {
+            val apiData = URL(CHARACTER_DATA_API).readText()
+            CharacterGenerator.fromApiData(apiData)
+        }
     }
 }

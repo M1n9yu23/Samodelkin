@@ -1,10 +1,13 @@
 package android.bignerdranch.com
 
+import android.bignerdranch.com.CharacterGenerator.fetchCharacterData
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 private const val CHARACTER_DATA_KEY = "CHARACTER_DATA_KEY"
 
@@ -35,14 +38,15 @@ class NewCharacterActivity : AppCompatActivity() {
         val generateButton = findViewById<Button>(R.id.generateButton)
 
         generateButton.setOnClickListener {
-            characterData = CharacterGenerator.fromApiData("halfling,Lars Kizzy,14,13,8")
-
-            characterData.run {
-                nameTextView.text = name
-                raceTextView.text = race
-                dexterityTextView.text = dex
-                wisdomTextView.text = wis
-                strengthTextView.text = str
+            GlobalScope.launch(Dispatchers.Main) {
+                characterData = fetchCharacterData().await()
+                characterData.run {
+                    nameTextView.text = name
+                    raceTextView.text = race
+                    dexterityTextView.text = dex
+                    wisdomTextView.text = wis
+                    strengthTextView.text = str
+                }
             }
         }
 
